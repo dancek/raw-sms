@@ -65,7 +65,9 @@ module SMS {
 			
 		};
 		toHex(): string {
-			var notes: string = '';
+			// FIXME: convert to hex
+			// TODO: optimize default octave and duration
+			var notes: string = this.melody.map(x => x.toString()).join('');
 			return `${this.name}:b=${this.tempo}:${notes}`;
 		};
 	}
@@ -73,6 +75,13 @@ module SMS {
 	class Note {
 		pitch: string;
 		octave: number;
+		// duration is one of 1,2,4,8,16,32; dotted also affects actual duration
 		duration: number;
+		dotted: boolean;
+		
+		toString(): string {
+			var dot = this.dotted ? '.' : '';
+			return `${this.duration}${this.pitch}${dot}${this.octave}`;
+		};
 	}
 }
