@@ -64,10 +64,13 @@ module SMS {
 		fromHex(data: string): void {
 			
 		};
+		fromRTTTL(data: string): void {
+			
+		};
 		toHex(): string {
 			// FIXME: convert to hex
 			// TODO: optimize default octave and duration
-			var notes: string = this.melody.map(x => x.toString()).join('');
+			var notes: string = this.melody.map(x => x.toString()).join(',');
 			return `${this.name}:b=${this.tempo}:${notes}`;
 		};
 	}
@@ -83,5 +86,20 @@ module SMS {
 			var dot = this.dotted ? '.' : '';
 			return `${this.duration}${this.pitch}${dot}${this.octave}`;
 		};
+	}
+	
+	class OperatorLogo implements IMessageContent {
+		data: boolean[][]; // 72x14 bitmap
+		
+		new() {
+			
+		}
+		
+		fromHex(data: string): void {
+			
+		};
+		toHex(): string {
+			return '';
+		}		
 	}
 }
