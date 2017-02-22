@@ -15,12 +15,19 @@ xdescribe('Ringtone', () => {
 });
 
 describe('OperatorLogo', () => {
+	const hex = '42f45000480e013c07bc40f07f079ff81e0f3c60f0ffc79ff81e0f3c70f1ffe79ff80f1e3c78f1f3c783c00f1e3c7cf3e08783c007bc3c7ef3c00783c007bc3c7ff3c00783c003b83c7ff3c00783c003f83c7bf3e08783c001f03c79f1f3c783c001f03c78f1ffe783c000e03c7870ffc783c000e03c78307f0783c0004000001000000000'
+
 	it('should parse a 72x14 OTA bitmap from hex', () => {
-		const hex = '42f45000480e013c07bc40f07f079ff81e0f3c60f0ffc79ff81e0f3c70f1ffe79ff80f1e3c78f1f3c783c00f1e3c7cf3e08783c007bc3c7ef3c00783c007bc3c7ff3c00783c003b83c7ff3c00783c003f83c7bf3e08783c001f03c79f1f3c783c001f03c78f1ffe783c000e03c7870ffc783c000e03c78307f0783c0004000001000000000'
 		const logo = OperatorLogo.fromHex(hex)
 
 		expect(logo.mcc).toEqual(244);
 		expect(logo.mnc).toEqual(5);
 		expect(logo.data.length).toEqual(72*14);
+	});
+
+	it('should recreate the same hex', () => {
+		const logo = OperatorLogo.fromHex(hex)
+
+		expect(logo.toHex()).toEqual(hex);		
 	});
 });

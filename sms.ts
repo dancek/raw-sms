@@ -118,7 +118,7 @@ export class OperatorLogo implements IMessageContent {
 	 * Convert OTA bitmap (as hex string) to Array<boolean>
 	 */
 	parseHexOtb(otb: string): Array<boolean> {
-		const otaHeader = otb.slice(0, 8);
+		const otaHeader = otb.slice(0, 8); // assert == 0048 0e01
 		const bitmap = otb.slice(8);
 
 		// convert in pieces, concatenate the arrays
@@ -132,7 +132,7 @@ export class OperatorLogo implements IMessageContent {
 	 * Convert a hex character to a 4-bit tuple of booleans
 	 */
 	hexCharToBits(char: string): [boolean, boolean, boolean, boolean] {
-		const n = parseInt(char);
+		const n = parseInt(char, 16);
 		// assert 0 <= char < 16
 
 		// get bits using bitwise AND
@@ -151,7 +151,40 @@ export class OperatorLogo implements IMessageContent {
 		return [mcc, mnc];
 	}
 
+	bitmapToHex(bits: Array<boolean>): string {
+		var hex = '';
+
+		// convert to hex "manually", four bits per hex character
+		for (var i = 0; i < bits.length; i += 4) {
+			// In js, true * 8 == 8 and false * 8 == 0. Allow this for perf.
+			const n = 
+				(bits[i] as any) * 8 +
+				(bits[i+1] as any) * 4 +
+				(bits[i+2] as any) * 2 +
+				(bits[i+3] as any) * 1;
+			hex += n.toString(16);
+		}
+		return hex;
+	}
+
+	/**
+	 * @param mcc MCC as a three-character zero-padded string
+	 * @param mnc MNC as a two-character zero-padded string
+	 */
+	mccmncToHex(mcc: string, mnc: string) {
+		return `${mcc[1]}${mcc[0]}f${mcc[2]}${mnc[1]}${mnc[0]}`;
+	}
+
 	toHex(): string {
-		return '';
+		const mccmnc = this.mccmncToHex(zeroPad(this.mcc, 3), zeroPad(this.mnc, 2));
+		const otaHeader = '00480e01'; // 72x14 1-bit, ie. the only size we support
+		const bitmap = this.bitmapToHex(this.data);
+
+		return mccmnc + otaHeader + bitmap;
 	}		
+}
+
+function zeroPad(n: number, len: number): string {
+	const s = String(n);
+	return Array(len - s.length + 1).join('0') + s;
 }
