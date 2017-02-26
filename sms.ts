@@ -197,6 +197,22 @@ export class OperatorLogo implements IMessageContent {
 
 		return new ImageData(rawData, 72, 14);
 	}
+
+	getPixel(x: number, y: number) {
+		return this.data[72*y + x];
+	}
+
+	/**
+	 * Toggle a single pixel and return a 1x1 ImageData representing it.
+	 */
+	setPixel(x: number, y: number, value: boolean): ImageData {
+		// assert 0 <= x < 72, 0 <= y < 14
+		this.data[72*y + x] = value;
+		
+		const pixel = new Uint8ClampedArray([0, 0, 0, value ? 255 : 0]);
+		const img = new ImageData(pixel, 1, 1);
+		return img;
+	}
 }
 
 function zeroPad(n: number, len: number): string {
