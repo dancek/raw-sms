@@ -1,1 +1,8 @@
-{}
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "lib": [ "es2015", "dom" ]
+    }
+}

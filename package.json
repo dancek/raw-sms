@@ -4,6 +4,7 @@
   "description": "tools for handling SMS ringtones and operator logos",
   "main": "sms.ts",
   "scripts": {
+    "build": "rollup -c",
     "test": "jest"
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/dancek/raw-sms#readme",
   "devDependencies": {
+    "@types/jest": "^18.1.1",
     "jest": "^19.0.1",
     "ts-jest": "^19.0.0"
   },

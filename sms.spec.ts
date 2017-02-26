@@ -1,4 +1,4 @@
-declare var jest, describe, it, expect, xdescribe, xit;
+import 'jest';
 
 import {Ringtone, OperatorLogo} from './sms';
 

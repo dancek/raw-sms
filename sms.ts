@@ -5,7 +5,7 @@ interface IMessage {
 
 interface IMessageContent {
 	toHex(): string;
-	fromHex(string): void;
+	fromHex(data: string): void;
 }
 
 enum MessageType {
@@ -90,7 +90,7 @@ class Note {
 export class OperatorLogo implements IMessageContent {
 	mcc: number;
 	mnc: number;
-	data: Array<boolean>; // 72x14 bitmap
+	data: boolean[]; // 72x14 bitmap. (true = black, false = transparent)
 	
 	new() {
 		this.data = new Array<boolean>(72*14);
@@ -151,7 +151,7 @@ export class OperatorLogo implements IMessageContent {
 		return [mcc, mnc];
 	}
 
-	bitmapToHex(bits: Array<boolean>): string {
+	bitmapToHex(bits: boolean[]): string {
 		var hex = '';
 
 		// convert to hex "manually", four bits per hex character
@@ -181,7 +181,22 @@ export class OperatorLogo implements IMessageContent {
 		const bitmap = this.bitmapToHex(this.data);
 
 		return mccmnc + otaHeader + bitmap;
-	}		
+	}
+
+	toImageData(): ImageData {
+		// create the RGBA image data, initialized to transparent black (ie. 0)
+		const rawData = new Uint8ClampedArray(72*14*4);
+
+		for (var i = 0; i < this.data.length; i += 1) {
+			// premature optimization: just change opacity of black pixels.
+			// ie. RGBA for black is (0,0,0,255) and white/transparent is (0,0,0,0)
+			if (this.data[i]) {
+				rawData[4*i + 3] = 255;
+			}
+		}
+
+		return new ImageData(rawData, 72, 14);
+	}
 }
 
 function zeroPad(n: number, len: number): string {
