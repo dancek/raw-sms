@@ -1,3 +1,5 @@
+import {Publisher, Change} from './pubsub';
+
 interface IMessage {
 	header: UDH;
 	body: IMessageContent;
@@ -87,10 +89,13 @@ class Note {
 	};
 }
 
-export class OperatorLogo implements IMessageContent {
+export class OperatorLogo extends Publisher implements IMessageContent {
+	
+	// TODO: setters that use publish()
 	mcc: number;
 	mnc: number;
-	data: boolean[]; // 72x14 bitmap. (true = black, false = transparent)
+
+	private data: boolean[]; // 72x14 bitmap. (true = black, false = transparent)
 	
 	new() {
 		this.data = new Array<boolean>(72*14);
@@ -112,6 +117,8 @@ export class OperatorLogo implements IMessageContent {
 
 		[this.mcc, this.mnc] = this.parseMccMnc(mccmnc);
 		this.data = this.parseHexOtb(otb);
+
+		this.publish();
 	}
 
 	/**
@@ -167,6 +174,25 @@ export class OperatorLogo implements IMessageContent {
 		return hex;
 	}
 
+	bitmapToRawString(bits: boolean[]): string {
+		var bytes: number[] = [];
+
+		for (var i = 0; i < bits.length; i += 8) {
+			// In js, true * 8 == 8 and false * 8 == 0. Allow this for perf.
+			const n = 
+				(bits[i] as any) * 128 +
+				(bits[i+1] as any) * 64 +
+				(bits[i+2] as any) * 32 +
+				(bits[i+3] as any) * 16 +
+				(bits[i+4] as any) * 8 +
+				(bits[i+5] as any) * 4 +
+				(bits[i+6] as any) * 2 +
+				(bits[i+7] as any) * 1;
+			bytes.push(n);
+		}
+		return String.fromCharCode.apply(null, bytes);
+	}
+
 	/**
 	 * @param mcc MCC as a three-character zero-padded string
 	 * @param mnc MNC as a two-character zero-padded string
@@ -198,6 +224,12 @@ export class OperatorLogo implements IMessageContent {
 		return new ImageData(rawData, 72, 14);
 	}
 
+	toBase64(): string {
+		var raw = this.bitmapToRawString(this.data);
+		console.log(raw, raw.length);
+		return btoa(raw);
+	}
+
 	getPixel(x: number, y: number) {
 		return this.data[72*y + x];
 	}
@@ -208,6 +240,15 @@ export class OperatorLogo implements IMessageContent {
 	setPixel(x: number, y: number, value: boolean): ImageData {
 		// assert 0 <= x < 72, 0 <= y < 14
 		this.data[72*y + x] = value;
+
+		this.publish(<Change>{
+			type: "pixel",
+			data: {
+				x: x,
+				y: y,
+				value: value
+			}
+		});
 		
 		const pixel = new Uint8ClampedArray([0, 0, 0, value ? 255 : 0]);
 		const img = new ImageData(pixel, 1, 1);
