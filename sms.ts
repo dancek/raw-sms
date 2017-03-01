@@ -98,11 +98,17 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 	private data: boolean[]; // 72x14 bitmap. (true = black, false = transparent)
 	
 	new() {
-		this.data = new Array<boolean>(72*14);
-
 		// default to Elisa (Finland)
 		this.mcc = 244;
 		this.mnc = 5;
+
+		// init bitmap
+		this.clear();
+	}
+	
+	clear() {
+		this.data = new Array<boolean>(72*14).fill(false);
+		this.publish();
 	}
 	
 	static fromHex(raw: string) {
@@ -129,6 +135,7 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 
 	fromBase64(base64: string) {
 		this.data = this.binaryToBitmap(atob(base64));
+		this.publish();
 	}
 
 	/**
@@ -253,7 +260,6 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 
 	toBase64(): string {
 		var raw = this.bitmapToBinary(this.data);
-		console.log(raw, raw.length);
 		return btoa(raw);
 	}
 
@@ -268,6 +274,7 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 		// assert 0 <= x < 72, 0 <= y < 14
 		this.data[72*y + x] = value;
 
+		// FIXME: should this be published at all?
 		this.publish(<Change>{
 			type: "pixel",
 			data: {

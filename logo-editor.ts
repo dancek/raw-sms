@@ -1,4 +1,5 @@
 import {OperatorLogo} from './sms'
+import {Change} from './pubsub'
 
 export function initCanvas(canvas: HTMLCanvasElement, logo: OperatorLogo): CanvasRenderingContext2D {
     const ctx: CanvasRenderingContext2D = canvas.getContext('2d');
@@ -67,7 +68,11 @@ export function createCanvasListeners(canvas: HTMLCanvasElement,
     };
 
     function canvasMouseUpListener(event: MouseEvent) {
-        dragging = false;
+        // update notification only at end of drag
+        if (dragging) {
+            dragging = false;
+            logo.publish(<Change>{type: "bitmap"});
+        }
     };
 
     return [canvasMouseDownListener, canvasMouseMoveListener, canvasMouseUpListener];

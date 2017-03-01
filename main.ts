@@ -7,20 +7,28 @@ function main(): void {
     const logo: OperatorLogo = getLogo();
     const ctx: CanvasRenderingContext2D = initCanvas(canvas, logo);
 
+    // EVENT HANDLERS
+
     {
         const [mousedown, mousemove, mouseup] = createCanvasListeners(canvas, ctx, logo);
         canvas.addEventListener('mousedown', mousedown);
         canvas.addEventListener('mousemove', mousemove);
-        canvas.addEventListener('mouseup', mouseup);
+        document.body.addEventListener('mouseup', mouseup);
     }
 
-    // change listeners
+    document.getElementById('clear-logo').addEventListener('click', function() {
+        logo.clear();
+        initCanvas(canvas, logo);
+    });
+
+
+    // CHANGE LISTENERS
 
     function setUrlHash() {
         location.hash = logo.toBase64();
     }
 
-    logo.subscribe(setUrlHash);
+    logo.subscribe(setUrlHash, "bitmap");
 
     // first calls
     setUrlHash();
