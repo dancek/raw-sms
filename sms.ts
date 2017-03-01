@@ -111,6 +111,12 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 		return logo;
 	}
 
+	static fromBase64(base64: string) {
+		const logo = new OperatorLogo();
+		logo.fromBase64(base64);
+		return logo;
+	}
+
 	fromHex(raw: string) {
 		const mccmnc = raw.slice(0, 6);
 		const otb = raw.slice(6);
@@ -119,6 +125,10 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 		this.data = this.parseHexOtb(otb);
 
 		this.publish();
+	}
+
+	fromBase64(base64: string) {
+		this.data = this.binaryToBitmap(atob(base64));
 	}
 
 	/**
@@ -174,7 +184,7 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 		return hex;
 	}
 
-	bitmapToRawString(bits: boolean[]): string {
+	bitmapToBinary(bits: boolean[]): string {
 		var bytes: number[] = [];
 
 		for (var i = 0; i < bits.length; i += 8) {
@@ -191,6 +201,23 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 			bytes.push(n);
 		}
 		return String.fromCharCode.apply(null, bytes);
+	}
+
+	binaryToBitmap(raw: string): boolean[] {
+		var bits: boolean[] = [];
+		var byte: number;
+		var bit: boolean;
+
+		// this is probably slow, but we only run this rarely
+		for (var i = 0; i < raw.length; i++) {
+			byte = raw.charCodeAt(i);
+			for (var exp = 7; exp >= 0; exp--) {
+				bit = Boolean(byte & (1 << exp));
+				bits.push(bit);
+			}
+		}
+
+		return bits;
 	}
 
 	/**
@@ -225,7 +252,7 @@ export class OperatorLogo extends Publisher implements IMessageContent {
 	}
 
 	toBase64(): string {
-		var raw = this.bitmapToRawString(this.data);
+		var raw = this.bitmapToBinary(this.data);
 		console.log(raw, raw.length);
 		return btoa(raw);
 	}
