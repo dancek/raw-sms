@@ -4,13 +4,13 @@ type Subscription = [Subscriber, ChangeType | undefined];
 
 export class Change {
     type: ChangeType;
-    data: Object;
+    data: object;
 }
 
 export class Publisher {
     private subscriptions: Subscription[] = new Array<Subscription>();
 
-    // unary: everything changed
+    // calling with no parameters: everything changed
     publish(change?: Change) {
         this.subscriptions.forEach(([f, type]) => {
             if (change === undefined || type === undefined || type === change.type) {

@@ -25,10 +25,11 @@
   "devDependencies": {
     "@types/jest": "^18.1.1",
     "jest": "^19.0.1",
-    "ts-jest": "^19.0.0"
+    "ts-jest": "^19.0.0",
+    "tslint": "^5.1.0"
   },
   "dependencies": {
-    "typescript": "^2.2.1"
+    "typescript": "^2.2.2"
   },
   "jest": {
     "transform": {
