@@ -4,7 +4,9 @@
   "description": "tools for handling SMS ringtones and operator logos",
   "main": "sms.ts",
   "scripts": {
-    "build": "rollup -c",
+    "build:dev": "webpack --config config/webpack.dev.js --progress --profile",
+    "server:dev:hmr": "npm run server:dev -- --inline --hot",
+    "server:dev": "webpack-dev-server --config config/webpack.dev.js --open --progress --profile --watch --content-base .",
     "test": "jest"
   },
   "repository": {
@@ -24,11 +26,16 @@
   "homepage": "https://github.com/dancek/raw-sms#readme",
   "devDependencies": {
     "@types/jest": "^18.1.1",
+    "@types/mithril": "^1.1.1",
     "jest": "^19.0.1",
     "ts-jest": "^19.0.0",
-    "tslint": "^5.1.0"
+    "ts-loader": "^2.0.3",
+    "tslint": "^5.1.0",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
+    "mithril": "^1.1.1",
     "typescript": "^2.2.2"
   },
   "jest": {

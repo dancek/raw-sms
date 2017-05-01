@@ -1,5 +1,9 @@
+import * as m from 'mithril';
+
 import {createCanvasListeners, initCanvas} from './logo-editor';
 import {OperatorLogo} from './sms';
+
+import {DataComponent} from './component/data';
 
 function main(): void {
     const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
@@ -32,6 +36,8 @@ function main(): void {
 
     // first calls
     setUrlHash();
+
+    m.render(document.getElementById('mithril-root'), m(DataComponent, {logo}));
 }
 
 function getLogo(): OperatorLogo {
@@ -41,7 +47,8 @@ function getLogo(): OperatorLogo {
     }
 
     // default: Vincit logo
-    return OperatorLogo.fromHex('42f45000480e013c07bc40f07f079ff81e0f3c60f0ffc79ff81e0f3c70f1ffe79ff80f1e3c78f1f3c783c00f1e3c7cf3e08783c007bc3c7ef3c00783c007bc3c7ff3c00783c003b83c7ff3c00783c003f83c7bf3e08783c001f03c79f1f3c783c001f03c78f1ffe783c000e03c7870ffc783c000e03c78307f0783c0004000001000000000');
+    return OperatorLogo.fromBase64('PAe8QPB/B5/4Hg88YPD/x5/4Hg88cPH/55/4Dx48ePHzx4PADx48fPPgh4PAB7w8fvPAB4PAB7w8f/' +
+        'PAB4PAA7g8f/PAB4PAA/g8e/Pgh4PAAfA8efHzx4PAAfA8ePH/54PAAOA8eHD/x4PAAOA8eDB/B4PAAEAAABAAAAAA');
 }
 
 main();

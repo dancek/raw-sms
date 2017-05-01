@@ -1,6 +1,6 @@
 import 'jest';
 
-import {OperatorLogo, Ringtone} from './sms';
+import {OperatorLogo, Ringtone} from '../src/sms';
 
 xdescribe('Ringtone', () => {
     it ('should read RTTTL and output correct hex', () => {
@@ -15,7 +15,8 @@ xdescribe('Ringtone', () => {
 });
 
 describe('OperatorLogo', () => {
-    const hex = '42f45000480e013c07bc40f07f079ff81e0f3c60f0ffc79ff81e0f3c70f1ffe79ff80f1e3c78f1f3c783c00f1e3c7cf3e08783c007bc3c7ef3c00783c007bc3c7ff3c00783c003b83c7ff3c00783c003f83c7bf3e08783c001f03c79f1f3c783c001f03c78f1ffe783c000e03c7870ffc783c000e03c78307f0783c0004000001000000000'
+    const hex = '42f45000480e013c07bc40f07f079ff81e0f3c60f0ffc79ff81e0f3c70f1ffe79ff80f1e3c78f1f3c783c00f1e3c7cf3e08783c007bc3c7ef3c00783c007bc3c7ff3c00783c003b83c7ff3c00783c003f83c7bf3e08783c001f03c79f1f3c783c001f03c78f1ffe783c000e03c7870ffc783c000e03c78307f0783c0004000001000000000';
+    const base64 = 'PAe8QPB/B5/4Hg88YPD/x5/4Hg88cPH/55/4Dx48ePHzx4PADx48fPPgh4PAB7w8fvPAB4PAB7w8f/PAB4PAA7g8f/PAB4PAA/g8e/Pgh4PAAfA8efHzx4PAAfA8ePH/54PAAOA8eHD/x4PAAOA8eDB/B4PAAEAAABAAAAAA';
 
     it('should parse a 72x14 OTA bitmap from hex', () => {
         const logo = OperatorLogo.fromHex(hex);
@@ -27,6 +28,19 @@ describe('OperatorLogo', () => {
 
     it('should recreate the same hex', () => {
         const logo = OperatorLogo.fromHex(hex);
+
+        expect(logo.toHex()).toEqual(hex);
+    });
+
+    it('should convert the hex representation to correct base64', () => {
+        const logo = OperatorLogo.fromHex(hex);
+
+        expect(logo.toBase64()).toEqual(base64);
+    });
+
+    // FIXME: this test fails, why?
+    it('should convert the base64 representation to correct hex', () => {
+        const logo = OperatorLogo.fromBase64(base64);
 
         expect(logo.toHex()).toEqual(hex);
     });

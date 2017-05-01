@@ -6,6 +6,7 @@
     "jsRules": {},
     "rules": {
         "curly": [true, "ignore-same-line"],
+        "interface-name": false,
         "max-classes-per-file": false,
         "max-line-length": false,
         "member-access": false,
